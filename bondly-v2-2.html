@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bondly v2 — Real Connections</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0c0f;
+  --surface: #14141a;
+  --surface2: #1c1c25;
+  --surface3: #242430;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #f2f2f8;
+  --text2: #8888a8;
+  --text3: #4a4a65;
+  --accent: #ff4d6d;
+  --accent2: #ff8099;
+  --accent-glow: rgba(255,77,109,0.25);
+  --teal: #00d4aa;
+  --teal-dim: rgba(0,212,170,0.15);
+  --gold: #ffd166;
+  --radius: 18px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-accent: 0 8px 32px rgba(255,77,109,0.3);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+
+/* SPLASH / LOGIN */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:flex-start;justify-content:center;flex-direction:column;gap:0;overflow-y:auto;padding:24px 0;align-items:center;}
+.splash-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(255,77,109,0.18) 0%,transparent 70%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(0,212,170,0.1) 0%,transparent 60%);pointer-events:none;}
+.splash-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;letter-spacing:-0.04em;background:linear-gradient(135deg,#ff4d6d,#ff8099,#ffd166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+.splash-tagline{font-size:15px;color:var(--text2);margin-bottom:24px;letter-spacing:0.01em;}
+.splash-card{background:var(--surface);border:1px solid var(--border2);border-radius:24px;padding:32px;width:380px;box-shadow:var(--shadow);max-height:80vh;overflow-y:auto;}
+.splash-card::-webkit-scrollbar{width:4px;}
+.splash-card::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
+.splash-tabs{display:flex;background:var(--surface2);border-radius:10px;padding:3px;margin-bottom:24px;}
+.splash-tab{flex:1;padding:8px;border-radius:8px;border:none;background:none;color:var(--text2);font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.splash-tab.active{background:var(--surface3);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.field input,.field textarea,.field select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--text);font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color 0.2s;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent);}
+.field textarea{resize:none;height:80px;}
+.field select option{background:var(--surface2);}
+.btn-main{width:100%;padding:13px;background:linear-gradient(135deg,#ff4d6d,#e8365a);border:none;border-radius:var(--radius-sm);color:#fff;font-family:'Instrument Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-top:4px;box-shadow:var(--shadow-accent);}
+.btn-main:hover{transform:translateY(-1px);box-shadow:0 12px 40px rgba(255,77,109,0.4);}
+.splash-error{font-size:12px;color:var(--accent);text-align:center;margin-top:10px;min-height:18px;}
+.interest-select{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.int-chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);transition:all 0.15s;user-select:none;}
+.int-chip.sel{border-color:var(--accent);background:rgba(255,77,109,0.15);color:var(--accent);}
+
+/* TOPBAR */
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;flex-shrink:0;z-index:100;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;background:linear-gradient(135deg,#ff4d6d,#ffd166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-right:28px;letter-spacing:-0.02em;}
+.nav{display:flex;gap:2px;flex:1;}
+.nav-btn{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);font-family:'Instrument Sans',sans-serif;display:flex;align-items:center;gap:6px;transition:all 0.15s;position:relative;}
+.nav-btn svg{width:15px;height:15px;stroke-width:2;}
+.nav-btn.active{background:rgba(255,77,109,0.12);color:var(--accent);}
+.nav-btn:hover:not(.active){background:var(--surface2);color:var(--text);}
+.nav-badge{position:absolute;top:5px;right:7px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 3px;display:none;}
+.nav-badge.show{display:flex;}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.user-chip{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;background:var(--surface2);border-radius:20px;cursor:pointer;border:1px solid var(--border);transition:border-color 0.15s;}
+.user-chip:hover{border-color:var(--border2);}
+.user-chip-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0;}
+.user-chip-name{font-size:12px;font-weight:500;color:var(--text);}
+.btn-logout{padding:6px 12px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all 0.15s;}
+.btn-logout:hover{color:var(--accent);border-color:var(--accent);}
+
+/* MAIN */
+.main{display:flex;flex:1;overflow:hidden;}
+
+/* DISCOVER */
+#page-discover{flex:1;display:flex;overflow:hidden;}
+.swipe-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:0;}
+.empty-state{text-align:center;color:var(--text3);padding:40px;}
+.empty-state svg{width:48px;height:48px;stroke:var(--text3);margin-bottom:12px;}
+.empty-state p{font-size:14px;margin-bottom:4px;color:var(--text2);}
+.empty-state span{font-size:12px;}
+.swipe-stack{position:relative;width:320px;height:440px;}
+.swipe-card{position:absolute;width:320px;height:440px;border-radius:22px;overflow:hidden;cursor:grab;user-select:none;transition:transform 0.15s;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.swipe-card:active{cursor:grabbing;}
+.card-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:90px;font-weight:800;position:relative;}
+.card-photo{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.card-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.2) 50%,transparent 100%);}
+.card-info{position:absolute;bottom:0;left:0;right:0;padding:18px;}
+.card-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#fff;}
+.card-sub{font-size:12px;color:rgba(255,255,255,0.75);margin-top:3px;display:flex;align-items:center;gap:8px;}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.card-tag{padding:3px 9px;border-radius:20px;background:rgba(255,255,255,0.15);backdrop-filter:blur(6px);font-size:10px;color:#fff;font-weight:500;}
+.like-lbl{position:absolute;top:20px;left:18px;padding:5px 12px;border:2.5px solid #00d4aa;border-radius:7px;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:#00d4aa;transform:rotate(-15deg);opacity:0;pointer-events:none;transition:opacity 0.15s;}
+.nope-lbl{position:absolute;top:20px;right:18px;padding:5px 12px;border:2.5px solid var(--accent);border-radius:7px;font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--accent);transform:rotate(15deg);opacity:0;pointer-events:none;transition:opacity 0.15s;}
+.swipe-actions{display:flex;gap:14px;margin-top:22px;align-items:center;}
+.swipe-btn{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.swipe-btn:hover{transform:scale(1.12);}
+.swipe-btn svg{width:20px;height:20px;}
+.btn-nope{background:var(--surface2);border:1px solid var(--border2);}
+.btn-nope svg{stroke:var(--accent);}
+.btn-like{background:var(--accent);box-shadow:var(--shadow-accent);}
+.btn-like svg{stroke:#fff;fill:#fff;}
+.btn-super{background:var(--surface2);border:1px solid var(--border2);}
+.btn-super svg{stroke:var(--gold);}
+@keyframes flyRight{to{transform:translateX(130%) rotate(22deg);opacity:0;}}
+@keyframes flyLeft{to{transform:translateX(-130%) rotate(-22deg);opacity:0;}}
+.fly-right{animation:flyRight 0.38s ease-in forwards;}
+.fly-left{animation:flyLeft 0.38s ease-in forwards;}
+
+/* MATCH POPUP */
+.match-popup{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:500;display:none;align-items:center;justify-content:center;}
+.match-popup.show{display:flex;}
+.match-popup-card{background:var(--surface);border:1px solid var(--border2);border-radius:28px;padding:40px 32px;text-align:center;max-width:340px;box-shadow:0 24px 80px rgba(255,77,109,0.3);}
+.match-popup-icon{font-size:56px;margin-bottom:8px;}
+.match-popup h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;background:linear-gradient(135deg,#ff4d6d,#ffd166);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.match-popup p{font-size:13px;color:var(--text2);margin-bottom:24px;}
+.match-popup-avs{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:24px;}
+.match-popup-av{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;border:3px solid var(--surface);}
+.match-heart{font-size:20px;}
+.match-popup-actions{display:flex;gap:10px;}
+.match-popup-actions button{flex:1;padding:11px;border-radius:10px;border:none;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-msg-them{background:var(--accent);color:#fff;}
+.btn-keep{background:var(--surface2);color:var(--text);border:1px solid var(--border2);}
+
+/* SIDEBAR */
+.discover-sidebar{width:280px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.ds-head{padding:16px 16px 12px;border-bottom:1px solid var(--border);}
+.ds-head h2{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
+.ds-head p{font-size:11px;color:var(--text3);margin-top:2px;}
+.ds-section{padding:12px 16px;border-bottom:1px solid var(--border);}
+.ds-section label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:7px;}
+.filter-pills{display:flex;flex-wrap:wrap;gap:5px;}
+.filter-pill{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);transition:all 0.15s;}
+.filter-pill.active{background:rgba(255,77,109,0.15);border-color:var(--accent);color:var(--accent);}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--surface3);border-radius:2px;outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg);}
+.range-row{margin-bottom:8px;}
+.range-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;}
+.range-label span{color:var(--text);font-weight:500;}
+.online-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:6px;}
+.online-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s;}
+.online-item:hover{background:var(--surface2);}
+.oi-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;position:relative;}
+.oi-dot{position:absolute;bottom:0;right:0;width:9px;height:9px;background:var(--teal);border-radius:50%;border:2px solid var(--surface);}
+.oi-info{flex:1;min-width:0;}
+.oi-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.oi-status{font-size:10px;color:var(--teal);}
+
+/* MATCHES PAGE */
+#page-matches{flex:1;display:none;flex-direction:column;overflow:hidden;}
+.page-header{padding:18px 22px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+.page-header h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.page-header p{font-size:12px;color:var(--text2);margin-top:2px;}
+.search-bar{padding:12px 22px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
+.search-input-wrap{display:flex;align-items:center;gap:8px;background:var(--surface2);border-radius:10px;padding:8px 14px;}
+.search-input-wrap svg{width:14px;height:14px;stroke:var(--text3);flex-shrink:0;}
+.search-input-wrap input{border:none;background:none;flex:1;font-size:13px;color:var(--text);outline:none;font-family:'Instrument Sans',sans-serif;}
+.search-input-wrap input::placeholder{color:var(--text3);}
+.matches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;padding:18px 22px;overflow-y:auto;flex:1;}
+.match-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:all 0.2s;}
+.match-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--border2);}
+.mc-img{height:150px;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800;color:rgba(255,255,255,0.25);position:relative;}
+.mc-body{padding:10px 12px;}
+.mc-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
+.mc-meta{font-size:10px;color:var(--text3);margin-top:2px;}
+.mc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+.mc-compat{font-size:10px;font-weight:600;color:var(--teal);background:var(--teal-dim);padding:3px 7px;border-radius:20px;}
+.mc-msg{width:24px;height:24px;border-radius:50%;background:rgba(255,77,109,0.15);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mc-msg svg{width:11px;height:11px;stroke:var(--accent);}
+
+/* MESSAGES PAGE */
+#page-messages{flex:1;display:none;overflow:hidden;}
+.msg-layout{display:flex;height:100%;}
+.msg-list{width:280px;border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface);flex-shrink:0;}
+.ml-head{padding:16px 14px 10px;border-bottom:1px solid var(--border);}
+.ml-head h2{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+.ml-search{padding:8px 12px;border-bottom:1px solid var(--border);}
+.ml-search-box{display:flex;align-items:center;gap:7px;background:var(--surface2);border-radius:8px;padding:6px 10px;}
+.ml-search-box svg{width:13px;height:13px;stroke:var(--text3);}
+.ml-search-box input{border:none;background:none;flex:1;font-size:12px;color:var(--text);outline:none;font-family:'Instrument Sans',sans-serif;}
+.threads{overflow-y:auto;flex:1;}
+.thread{display:flex;align-items:center;gap:9px;padding:11px 12px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid var(--border);}
+.thread:hover{background:var(--surface2);}
+.thread.active{background:rgba(255,77,109,0.08);}
+.th-av{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;position:relative;}
+.th-dot{position:absolute;bottom:0;right:0;width:9px;height:9px;background:var(--teal);border-radius:50%;border:2px solid var(--surface);}
+.th-info{flex:1;min-width:0;}
+.th-name{font-size:13px;font-weight:600;}
+.th-preview{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
+.th-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.th-time{font-size:10px;color:var(--text3);}
+.th-badge{min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;padding:0 3px;}
+
+/* CHAT */
+.chat-window{flex:1;display:flex;flex-direction:column;background:var(--bg);}
+.chat-empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--text3);}
+.chat-empty svg{width:40px;height:40px;stroke:var(--text3);}
+.chat-empty p{font-size:13px;}
+.chat-head{padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.ch-av{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;}
+.ch-info{flex:1;}
+.ch-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.ch-status{font-size:11px;color:var(--teal);}
+.ch-actions{display:flex;gap:6px;}
+.ch-action{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.ch-action svg{width:13px;height:13px;stroke:var(--text2);}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;}
+.bubble-wrap{display:flex;align-items:flex-end;gap:7px;}
+.bubble-wrap.me{flex-direction:row-reverse;}
+.bav{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;}
+.bubble{max-width:65%;padding:9px 13px;border-radius:16px;font-size:13px;line-height:1.5;word-break:break-word;}
+.bubble-wrap:not(.me) .bubble{background:var(--surface);border-bottom-left-radius:4px;color:var(--text);}
+.bubble-wrap.me .bubble{background:var(--accent);border-bottom-right-radius:4px;color:#fff;}
+.btime{font-size:10px;color:var(--text3);flex-shrink:0;padding:0 3px;}
+.typing-ind{display:flex;align-items:center;gap:4px;padding:8px 0;}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:typingBounce 1.2s infinite;}
+.typing-dot:nth-child(2){animation-delay:0.2s;}
+.typing-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-6px);}}
+.chat-input-area{padding:12px 14px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:22px;padding:9px 16px;font-size:13px;color:var(--text);outline:none;font-family:'Instrument Sans',sans-serif;transition:border-color 0.2s;}
+.chat-input:focus{border-color:rgba(255,77,109,0.4);}
+.chat-input::placeholder{color:var(--text3);}
+.chat-send{width:36px;height:36px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;box-shadow:0 4px 16px rgba(255,77,109,0.35);}
+.chat-send:hover{transform:scale(1.08);}
+.chat-send svg{width:14px;height:14px;stroke:#fff;}
+
+/* PROFILE PAGE */
+#page-profile{flex:1;display:none;overflow-y:auto;background:var(--bg);}
+.profile-wrap{max-width:660px;margin:0 auto;padding:28px 24px;}
+.profile-hero{background:var(--surface);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;border:1px solid var(--border);}
+.prof-banner{height:130px;position:relative;}
+.prof-av-lg{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;border:4px solid var(--surface);position:absolute;bottom:-38px;left:22px;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.prof-info{padding:48px 22px 18px;}
+.prof-name-row{display:flex;align-items:center;justify-content:space-between;}
+.prof-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.prof-edit-btn{padding:7px 16px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-size:12px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all 0.15s;}
+.prof-edit-btn:hover{border-color:var(--accent);color:var(--accent);}
+.prof-sub{font-size:12px;color:var(--text2);margin-top:5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.prof-tag{padding:3px 9px;border-radius:20px;font-size:10px;background:rgba(255,77,109,0.12);color:var(--accent);font-weight:500;}
+.prof-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);}
+.prof-stat{background:var(--surface);padding:14px;text-align:center;}
+.prof-stat-n{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--text);}
+.prof-stat-l{font-size:10px;color:var(--text3);margin-top:2px;}
+.prof-section{background:var(--surface);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px;border:1px solid var(--border);}
+.prof-section h3{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;}
+.prof-bio{font-size:13px;color:var(--text2);line-height:1.7;}
+.ints-wrap{display:flex;flex-wrap:wrap;gap:6px;}
+.int-tag{padding:5px 12px;border-radius:20px;font-size:12px;background:var(--surface2);color:var(--text2);border:1px solid var(--border2);}
+.int-tag.hi{background:rgba(255,77,109,0.12);color:var(--accent);border-color:transparent;}
+
+/* EDIT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:400;display:none;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:22px;padding:28px;width:420px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow);}
+.modal h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:20px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn-cancel{flex:1;padding:10px;border-radius:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--text);font-family:'Instrument Sans',sans-serif;font-size:13px;cursor:pointer;}
+.btn-save{flex:2;padding:10px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 18px;border-radius:24px;font-size:13px;opacity:0;transition:all 0.3s;z-index:999;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.page-enter{animation:fadeUp 0.22s ease;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-bg"></div>
+  <div class="splash-logo">Bondly</div>
+  <div class="splash-tagline">Meet real people. Make real connections.</div>
+  <div class="splash-card">
+    <div class="splash-tabs">
+      <button class="splash-tab active" onclick="switchTab('login',this)">Sign In</button>
+      <button class="splash-tab" onclick="switchTab('register',this)">Join Bondly</button>
+    </div>
+    <!-- LOGIN -->
+    <div id="tab-login">
+      <div class="field"><label>Username</label><input id="li-user" type="text" placeholder="Your username" autocomplete="off"></div>
+      <div class="field"><label>Password</label><input id="li-pass" type="password" placeholder="Your password"></div>
+      <button class="btn-main" onclick="doLogin()">Sign In</button>
+      <div class="splash-error" id="li-err"></div>
+    </div>
+    <!-- REGISTER -->
+    <div id="tab-register" style="display:none;">
+      <div class="field"><label>Full Name</label><input id="rg-name" type="text" placeholder="Your name" autocomplete="off"></div>
+      <div class="field"><label>Username</label><input id="rg-user" type="text" placeholder="Choose a username" autocomplete="off"></div>
+      <div class="field"><label>Password</label><input id="rg-pass" type="password" placeholder="Choose a password"></div>
+      <div class="field"><label>Age</label><input id="rg-age" type="number" min="18" max="80" placeholder="Your age"></div>
+      <div class="field"><label>City</label><input id="rg-city" type="text" placeholder="Your city" value="Gaborone"></div>
+      <div class="field"><label>Bio</label><textarea id="rg-bio" placeholder="Tell people about yourself..."></textarea></div>
+      <div class="field"><label>Looking for</label>
+        <div class="filter-pills" style="margin-top:4px;" id="rg-looking">
+          <div class="filter-pill" onclick="togglePill(this)">Friends</div>
+          <div class="filter-pill" onclick="togglePill(this)">Study buddy</div>
+          <div class="filter-pill" onclick="togglePill(this)">Gym partner</div>
+          <div class="filter-pill" onclick="togglePill(this)">Networking</div>
+          <div class="filter-pill" onclick="togglePill(this)">Dating</div>
+        </div>
+      </div>
+      <div class="field"><label>Interests (pick 3+)</label>
+        <div class="interest-select" id="rg-interests">
+          <div class="int-chip" onclick="toggleInt(this)">🎵 Music</div>
+          <div class="int-chip" onclick="toggleInt(this)">💻 Tech</div>
+          <div class="int-chip" onclick="toggleInt(this)">✈️ Travel</div>
+          <div class="int-chip" onclick="toggleInt(this)">📚 Reading</div>
+          <div class="int-chip" onclick="toggleInt(this)">🎮 Gaming</div>
+          <div class="int-chip" onclick="toggleInt(this)">🏋️ Fitness</div>
+          <div class="int-chip" onclick="toggleInt(this)">🍳 Cooking</div>
+          <div class="int-chip" onclick="toggleInt(this)">📸 Photography</div>
+          <div class="int-chip" onclick="toggleInt(this)">🎨 Art</div>
+          <div class="int-chip" onclick="toggleInt(this)">🏃 Running</div>
+          <div class="int-chip" onclick="toggleInt(this)">🚀 Startups</div>
+          <div class="int-chip" onclick="toggleInt(this)">🎬 Movies</div>
+        </div>
+      </div>
+      <button class="btn-main" onclick="doRegister()">Create My Profile</button>
+      <div class="splash-error" id="rg-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none;flex-direction:column;height:100%;">
+  <div class="topbar">
+    <div class="logo">Bondly</div>
+    <div class="nav">
+      <button class="nav-btn active" id="nav-discover" onclick="showPage('discover',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Discover
+      </button>
+      <button class="nav-btn" id="nav-matches" onclick="showPage('matches',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        Matches
+        <div class="nav-badge" id="badge-matches"></div>
+      </button>
+      <button class="nav-btn" id="nav-messages" onclick="showPage('messages',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Messages
+        <div class="nav-badge" id="badge-msgs"></div>
+      </button>
+      <button class="nav-btn" id="nav-profile" onclick="showPage('profile',this)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile
+      </button>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip" id="user-chip" onclick="showPage('profile',document.getElementById('nav-profile'))">
+        <div class="user-chip-av" id="uc-av"></div>
+        <span class="user-chip-name" id="uc-name"></span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- DISCOVER -->
+    <div id="page-discover" class="page-enter" style="flex:1;display:flex;overflow:hidden;">
+      <div class="swipe-area">
+        <div class="swipe-stack" id="swipe-stack"></div>
+        <div class="swipe-actions" id="swipe-actions" style="display:none;">
+          <button class="swipe-btn btn-nope" onclick="swipeCard('left')" title="Pass">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <button class="swipe-btn btn-super" onclick="swipeCard('super')" title="Super Connect">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          </button>
+          <button class="swipe-btn btn-like" onclick="swipeCard('right')" title="Connect">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="discover-sidebar">
+        <div class="ds-head"><h2>Find Your People</h2><p>Discover who's around you</p></div>
+        <div class="ds-section">
+          <label>Looking for</label>
+          <div class="filter-pills" id="filter-looking">
+            <div class="filter-pill active" onclick="togglePill(this)">Friends</div>
+            <div class="filter-pill" onclick="togglePill(this)">Study buddy</div>
+            <div class="filter-pill" onclick="togglePill(this)">Gym partner</div>
+            <div class="filter-pill" onclick="togglePill(this)">Networking</div>
+            <div class="filter-pill" onclick="togglePill(this)">Dating</div>
+          </div>
+        </div>
+        <div class="ds-section">
+          <label>Distance</label>
+          <div class="range-row"><div class="range-label">Radius <span id="dist-val">25 km</span></div><input type="range" min="1" max="200" value="25" oninput="document.getElementById('dist-val').textContent=this.value+' km'"></div>
+          <label>Age</label>
+          <div class="range-row"><div class="range-label">Min <span id="age-min">18</span></div><input type="range" min="18" max="60" value="18" oninput="document.getElementById('age-min').textContent=this.value"></div>
+          <div class="range-row"><div class="range-label">Max <span id="age-max">40</span></div><input type="range" min="18" max="60" value="40" oninput="document.getElementById('age-max').textContent=this.value"></div>
+        </div>
+        <div class="ds-section" style="border-bottom:none;padding-bottom:6px;"><label>Online Now</label></div>
+        <div class="online-list" id="online-list"></div>
+      </div>
+    </div>
+
+    <!-- MATCHES -->
+    <div id="page-matches" style="display:none;flex:1;">
+      <div class="page-header"><h1>Your Matches 💫</h1><p id="match-count-text">Loading...</p></div>
+      <div class="search-bar"><div class="search-input-wrap"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search your matches..." oninput="filterMatches(this.value)"></div></div>
+      <div class="matches-grid" id="matches-grid"></div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="page-messages" style="display:none;flex:1;overflow:hidden;">
+      <div class="msg-layout">
+        <div class="msg-list">
+          <div class="ml-head"><h2>Messages</h2></div>
+          <div class="ml-search"><div class="ml-search-box"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search..."></div></div>
+          <div class="threads" id="threads"></div>
+        </div>
+        <div class="chat-window" id="chat-window">
+          <div class="chat-empty" id="chat-empty">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <p>Select a conversation</p>
+          </div>
+          <div id="chat-active" style="display:none;flex-direction:column;height:100%;">
+            <div class="chat-head" id="chat-head"></div>
+            <div class="chat-msgs" id="chat-msgs"></div>
+            <div class="chat-input-area">
+              <input class="chat-input" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){sendMsg();event.preventDefault();}">
+              <button class="chat-send" onclick="sendMsg()"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="page-profile" style="display:none;flex:1;">
+      <div class="profile-wrap" id="profile-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MATCH POPUP -->
+<div class="match-popup" id="match-popup">
+  <div class="match-popup-card">
+    <div class="match-popup-icon">🎉</div>
+    <h2>It's a Match!</h2>
+    <p id="match-popup-text">You and someone both want to connect!</p>
+    <div class="match-popup-avs" id="match-popup-avs"></div>
+    <div class="match-popup-actions">
+      <button class="match-popup-actions btn-keep" onclick="closeMatchPopup()">Keep Swiping</button>
+      <button class="btn-msg-them" id="btn-msg-them" onclick="goToMatchChat()">Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h2>Edit Profile</h2>
+    <div class="field"><label>Full Name</label><input id="ed-name" type="text"></div>
+    <div class="field"><label>Age</label><input id="ed-age" type="number" min="18" max="80"></div>
+    <div class="field"><label>City</label><input id="ed-city" type="text"></div>
+    <div class="field"><label>Bio</label><textarea id="ed-bio"></textarea></div>
+    <div class="field"><label>Looking for</label>
+      <div class="filter-pills" id="ed-looking" style="margin-top:4px;">
+        <div class="filter-pill" onclick="togglePill(this)">Friends</div>
+        <div class="filter-pill" onclick="togglePill(this)">Study buddy</div>
+        <div class="filter-pill" onclick="togglePill(this)">Gym partner</div>
+        <div class="filter-pill" onclick="togglePill(this)">Networking</div>
+        <div class="filter-pill" onclick="togglePill(this)">Dating</div>
+      </div>
+    </div>
+    <div class="field"><label>Interests</label>
+      <div class="interest-select" id="ed-interests">
+        <div class="int-chip" onclick="toggleInt(this)">🎵 Music</div>
+        <div class="int-chip" onclick="toggleInt(this)">💻 Tech</div>
+        <div class="int-chip" onclick="toggleInt(this)">✈️ Travel</div>
+        <div class="int-chip" onclick="toggleInt(this)">📚 Reading</div>
+        <div class="int-chip" onclick="toggleInt(this)">🎮 Gaming</div>
+        <div class="int-chip" onclick="toggleInt(this)">🏋️ Fitness</div>
+        <div class="int-chip" onclick="toggleInt(this)">🍳 Cooking</div>
+        <div class="int-chip" onclick="toggleInt(this)">📸 Photography</div>
+        <div class="int-chip" onclick="toggleInt(this)">🎨 Art</div>
+        <div class="int-chip" onclick="toggleInt(this)">🏃 Running</div>
+        <div class="int-chip" onclick="toggleInt(this)">🚀 Startups</div>
+        <div class="int-chip" onclick="toggleInt(this)">🎬 Movies</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STORAGE HELPERS ─────────────────────────────────────────────────────────
+const store = window.storage;
+
+async function sget(key, shared=true) {
+  try { const r = await store.get(key, shared); return r ? JSON.parse(r.value) : null; } catch { return null; }
+}
+async function sset(key, val, shared=true) {
+  try { await store.set(key, JSON.stringify(val), shared); } catch(e) { console.error('sset',e); }
+}
+async function sdel(key, shared=true) {
+  try { await store.delete(key, shared); } catch {}
+}
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let ME = null; // current user object
+let allUsers = []; // all registered users
+let myMatches = []; // usernames I matched with
+let swipeQueue = []; // users left to swipe
+let swipeIndex = 0;
+let activeChat = null; // username of open chat
+let matchPopupPerson = null;
+let pollInterval = null;
+let lastMsgCounts = {};
+
+const GRADIENTS = [
+  'linear-gradient(135deg,#ff4d6d,#ff8099)',
+  'linear-gradient(135deg,#3b6ef0,#7b9ff5)',
+  'linear-gradient(135deg,#00d4aa,#5dd4c0)',
+  'linear-gradient(135deg,#9b6ef0,#c49efa)',
+  'linear-gradient(135deg,#ffd166,#f5a040)',
+  'linear-gradient(135deg,#e0507a,#f080a0)',
+  'linear-gradient(135deg,#06d6a0,#118ab2)',
+  'linear-gradient(135deg,#f77f00,#fcbf49)',
+];
+function getGradient(username) {
+  let h=0; for(let c of username) h=(h*31+c.charCodeAt(0))&0xffff;
+  return GRADIENTS[h % GRADIENTS.length];
+}
+function getInitials(name) {
+  return name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+function switchTab(tab, el) {
+  document.querySelectorAll('.splash-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-login').style.display = tab==='login'?'':'none';
+  document.getElementById('tab-register').style.display = tab==='register'?'':'none';
+  document.getElementById('li-err').textContent='';
+  document.getElementById('rg-err').textContent='';
+}
+
+async function doLogin() {
+  const user = document.getElementById('li-user').value.trim().toLowerCase();
+  const pass = document.getElementById('li-pass').value;
+  if (!user||!pass) { document.getElementById('li-err').textContent='Please fill all fields.'; return; }
+  const profile = await sget('user:'+user);
+  if (!profile || profile.password !== btoa(pass)) {
+    document.getElementById('li-err').textContent='Invalid username or password.'; return;
+  }
+  ME = profile;
+  // update last seen
+  ME.lastSeen = Date.now();
+  await sset('user:'+user, ME);
+  await bootApp();
+}
+
+async function doRegister() {
+  const name = document.getElementById('rg-name').value.trim();
+  const user = document.getElementById('rg-user').value.trim().toLowerCase().replace(/\s/g,'');
+  const pass = document.getElementById('rg-pass').value;
+  const age = parseInt(document.getElementById('rg-age').value);
+  const city = document.getElementById('rg-city').value.trim();
+  const bio = document.getElementById('rg-bio').value.trim();
+  const lookingFor = [...document.querySelectorAll('#rg-looking .filter-pill.active')].map(e=>e.textContent);
+  const interests = [...document.querySelectorAll('#rg-interests .int-chip.sel')].map(e=>e.textContent);
+
+  if (!name||!user||!pass||!age||!city) { document.getElementById('rg-err').textContent='Please fill all required fields.'; return; }
+  if (user.length < 3) { document.getElementById('rg-err').textContent='Username must be at least 3 characters.'; return; }
+  if (age < 18) { document.getElementById('rg-err').textContent='You must be 18 or older.'; return; }
+  if (interests.length < 1) { document.getElementById('rg-err').textContent='Pick at least 1 interest.'; return; }
+
+  const existing = await sget('user:'+user);
+  if (existing) { document.getElementById('rg-err').textContent='Username already taken.'; return; }
+
+  // Add to global user index
+  const idx = await sget('users:index') || [];
+  if (!idx.includes(user)) idx.push(user);
+  await sset('users:index', idx);
+
+  ME = { username:user, name, password:btoa(pass), age, city, bio, lookingFor, interests, joined:Date.now(), lastSeen:Date.now(), likes:[], passes:[], matches:[] };
+  await sset('user:'+user, ME);
+  await bootApp();
+}
+
+async function bootApp() {
+  document.getElementById('splash').style.display='none';
+  const app = document.getElementById('app');
+  app.style.display='flex';
+  // Update topbar
+  document.getElementById('uc-name').textContent = ME.name.split(' ')[0];
+  const ucAv = document.getElementById('uc-av');
+  ucAv.style.background = getGradient(ME.username);
+  ucAv.textContent = getInitials(ME.name);
+
+  await loadAllUsers();
+  await buildSwipeQueue();
+  buildDiscover();
+  buildOnlineList();
+  await buildMatches();
+  await buildThreads();
+  renderProfile();
+  startPolling();
+}
+
+function doLogout() {
+  ME = null; allUsers = []; myMatches = []; swipeQueue = []; swipeIndex = 0; activeChat = null;
+  clearInterval(pollInterval);
+  document.getElementById('app').style.display='none';
+  document.getElementById('splash').style.display='flex';
+  document.getElementById('li-user').value='';
+  document.getElementById('li-pass').value='';
+  document.getElementById('li-err').textContent='';
+  showPage('discover', document.getElementById('nav-discover'));
+}
+
+// ─── USERS ───────────────────────────────────────────────────────────────────
+async function loadAllUsers() {
+  const idx = await sget('users:index') || [];
+  allUsers = [];
+  for (const u of idx) {
+    if (u === ME.username) continue;
+    const p = await sget('user:'+u);
+    if (p) allUsers.push(p);
+  }
+}
+
+// ─── SWIPE QUEUE ─────────────────────────────────────────────────────────────
+async function buildSwipeQueue() {
+  const seen = new Set([...(ME.likes||[]), ...(ME.passes||[]), ...(ME.matches||[])]);
+  swipeQueue = allUsers.filter(u => !seen.has(u.username));
+  swipeIndex = 0;
+}
+
+function buildDiscover() {
+  const stack = document.getElementById('swipe-stack');
+  const actions = document.getElementById('swipe-actions');
+  stack.innerHTML = '';
+  const remaining = swipeQueue.slice(swipeIndex);
+  if (remaining.length === 0) {
+    stack.innerHTML = `<div class="empty-state" style="display:flex;flex-direction:column;align-items:center;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><p>No more people to discover</p><span>Check back soon as more people join!</span></div>`;
+    actions.style.display='none'; return;
+  }
+  actions.style.display='flex';
+  const show = remaining.slice(0,3).reverse();
+  show.forEach((p,i) => {
+    const card = document.createElement('div');
+    card.className='swipe-card';
+    card.style.transform=`scale(${0.93+i*0.035}) translateY(${(2-i)*12}px)`;
+    card.style.zIndex=i;
+    const grad = getGradient(p.username);
+    card.innerHTML=`
+      <div class="card-bg" style="background:${grad};">
+        <div class="card-grad"></div>
+        <span style="opacity:0.15;font-family:'Syne',sans-serif;">${getInitials(p.name)}</span>
+      </div>
+      <div class="card-grad"></div>
+      <div class="card-info">
+        <div class="card-name">${p.name}, ${p.age}</div>
+        <div class="card-sub">📍 ${p.city} &nbsp;•&nbsp; ${calcCompat(ME,p)}% vibe match</div>
+        <div class="card-tags">${(p.interests||[]).slice(0,3).map(t=>`<span class="card-tag">${t}</span>`).join('')}</div>
+        ${p.bio?`<div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:8px;line-height:1.4;">${p.bio.slice(0,80)}${p.bio.length>80?'...':''}</div>`:''}
+      </div>
+      <div class="like-lbl">CONNECT ✓</div>
+      <div class="nope-lbl">PASS ✗</div>`;
+    if (i===show.length-1) setupDrag(card, p);
+    stack.appendChild(card);
+  });
+}
+
+function calcCompat(a, b) {
+  const aI = new Set(a.interests||[]);
+  const bI = b.interests||[];
+  const shared = bI.filter(x=>aI.has(x)).length;
+  const total = Math.max(1, Math.max(aI.size, bI.length));
+  return Math.min(99, Math.round(50 + (shared/total)*49));
+}
+
+function setupDrag(card, person) {
+  let sx, sy, dragging=false;
+  const ll = card.querySelector('.like-lbl');
+  const nl = card.querySelector('.nope-lbl');
+  card.addEventListener('mousedown', e=>{sx=e.clientX;sy=e.clientY;dragging=true;});
+  const mm = e=>{
+    if(!dragging)return;
+    const dx=e.clientX-sx,dy=e.clientY-sy;
+    card.style.transform=`translate(${dx}px,${dy}px) rotate(${dx*0.07}deg)`;
+    card.style.transition='none';
+    ll.style.opacity=Math.max(0,dx/90);
+    nl.style.opacity=Math.max(0,-dx/90);
+  };
+  const mu = e=>{
+    if(!dragging)return; dragging=false;
+    const dx=e.clientX-sx;
+    card.style.transition='';
+    ll.style.opacity=0; nl.style.opacity=0;
+    if(Math.abs(dx)>90){dx>0?doSwipe('right',card,person):doSwipe('left',card,person);}
+    else{card.style.transform=`scale(1) translateY(0)`;}
+  };
+  document.addEventListener('mousemove',mm);
+  document.addEventListener('mouseup',mu);
+}
+
+function swipeCard(dir) {
+  const stack=document.getElementById('swipe-stack');
+  const top=stack.lastElementChild;
+  if(!top||top.classList.contains('empty-state'))return;
+  const remaining=swipeQueue.slice(swipeIndex);
+  if(remaining.length===0)return;
+  const person=remaining[Math.min(2,remaining.length-1)];
+  doSwipe(dir,top,person);
+}
+
+async function doSwipe(dir, card, person) {
+  if(dir==='right'||dir==='super'){
+    card.classList.add('fly-right');
+    ME.likes=ME.likes||[];
+    if(!ME.likes.includes(person.username)) ME.likes.push(person.username);
+    await sset('user:'+ME.username, ME);
+    // check if they liked me too
+    const theirProfile = await sget('user:'+person.username);
+    if(theirProfile && (theirProfile.likes||[]).includes(ME.username) && !(ME.matches||[]).includes(person.username)){
+      // It's a match!
+      ME.matches=ME.matches||[];
+      ME.matches.push(person.username);
+      theirProfile.matches=theirProfile.matches||[];
+      theirProfile.matches.push(ME.username);
+      await sset('user:'+ME.username, ME);
+      await sset('user:'+person.username, theirProfile);
+      // create chat room
+      const chatKey = chatRoomKey(ME.username, person.username);
+      const existing = await sget(chatKey);
+      if(!existing) await sset(chatKey, {msgs:[]});
+      matchPopupPerson = person;
+      setTimeout(()=>showMatchPopup(person), 400);
+    }
+  } else {
+    card.classList.add('fly-left');
+    ME.passes=ME.passes||[];
+    if(!ME.passes.includes(person.username)) ME.passes.push(person.username);
+    await sset('user:'+ME.username, ME);
+  }
+  swipeIndex++;
+  setTimeout(()=>{buildDiscover();}, 380);
+}
+
+// ─── MATCH POPUP ─────────────────────────────────────────────────────────────
+function showMatchPopup(person) {
+  const avs = document.getElementById('match-popup-avs');
+  avs.innerHTML=`
+    <div class="match-popup-av" style="background:${getGradient(ME.username)}">${getInitials(ME.name)}</div>
+    <div class="match-heart">💖</div>
+    <div class="match-popup-av" style="background:${getGradient(person.username)}">${getInitials(person.name)}</div>`;
+  document.getElementById('match-popup-text').textContent=`You and ${person.name} both want to connect!`;
+  document.getElementById('match-popup').classList.add('show');
+  buildMatches();
+  buildThreads();
+}
+function closeMatchPopup(){ document.getElementById('match-popup').classList.remove('show'); }
+function goToMatchChat(){
+  closeMatchPopup();
+  if(matchPopupPerson){ openChat(matchPopupPerson.username); showPage('messages',document.getElementById('nav-messages')); }
+}
+
+// ─── ONLINE LIST ─────────────────────────────────────────────────────────────
+function buildOnlineList() {
+  const list=document.getElementById('online-list');
+  list.innerHTML='';
+  const recent = allUsers.filter(u=>(Date.now()-(u.lastSeen||0))<300000).slice(0,8);
+  if(recent.length===0){list.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:12px;">No one online right now</div>`;return;}
+  recent.forEach(p=>{
+    list.innerHTML+=`<div class="online-item" onclick="openChat('${p.username}');showPage('messages',document.getElementById('nav-messages'))">
+      <div class="oi-av" style="background:${getGradient(p.username)}">${getInitials(p.name)}<div class="oi-dot"></div></div>
+      <div class="oi-info"><div class="oi-name">${p.name}</div><div class="oi-status">Active now</div></div>
+    </div>`;
+  });
+}
+
+// ─── MATCHES ─────────────────────────────────────────────────────────────────
+async function buildMatches() {
+  await loadAllUsers();
+  const me = await sget('user:'+ME.username)||ME;
+  ME.matches = me.matches||[];
+  myMatches = allUsers.filter(u=>(ME.matches||[]).includes(u.username));
+  const grid=document.getElementById('matches-grid');
+  grid.innerHTML='';
+  document.getElementById('match-count-text').textContent=`${myMatches.length} ${myMatches.length===1?'person':'people'} matched with you`;
+  const badge=document.getElementById('badge-matches');
+  if(myMatches.length>0){badge.textContent=myMatches.length;badge.classList.add('show');}else{badge.classList.remove('show');}
+  if(myMatches.length===0){grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);"><p style="font-size:14px;margin-bottom:4px;">No matches yet</p><span style="font-size:12px;">Keep swiping!</span></div>`;return;}
+  myMatches.forEach(p=>{
+    const card=document.createElement('div');
+    card.className='match-card';
+    card.dataset.name=p.name.toLowerCase();
+    card.onclick=()=>{ openChat(p.username); showPage('messages',document.getElementById('nav-messages')); };
+    card.innerHTML=`
+      <div class="mc-img" style="background:${getGradient(p.username)};">${getInitials(p.name)}</div>
+      <div class="mc-body">
+        <div class="mc-name">${p.name}</div>
+        <div class="mc-meta">📍 ${p.city} · ${p.age} yrs</div>
+        <div class="mc-footer">
+          <span class="mc-compat">${calcCompat(ME,p)}% vibe</span>
+          <button class="mc-msg" onclick="event.stopPropagation();openChat('${p.username}');showPage('messages',document.getElementById('nav-messages'))"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+function filterMatches(q){document.querySelectorAll('.match-card').forEach(c=>{c.style.display=c.dataset.name.includes(q.toLowerCase())?'':'none';});}
+
+// ─── THREADS ─────────────────────────────────────────────────────────────────
+async function buildThreads() {
+  const me = await sget('user:'+ME.username)||ME;
+  ME.matches = me.matches||[];
+  myMatches = allUsers.filter(u=>(ME.matches||[]).includes(u.username));
+  const threads=document.getElementById('threads');
+  threads.innerHTML='';
+  if(myMatches.length===0){threads.innerHTML=`<div style="text-align:center;padding:24px;font-size:12px;color:var(--text3);">Match with someone to start chatting!</div>`;return;}
+  for(const p of myMatches){
+    const key=chatRoomKey(ME.username,p.username);
+    const room=await sget(key)||{msgs:[]};
+    const last=room.msgs[room.msgs.length-1];
+    const preview=last?(last.from===ME.username?'You: ':'')+last.text.slice(0,30)+(last.text.length>30?'...':''):'Say hello! 👋';
+    const time=last?formatTime(last.ts):'';
+    const unread=room.msgs.filter(m=>m.from!==ME.username&&!m.read).length;
+    const div=document.createElement('div');
+    div.className='thread'+(activeChat===p.username?' active':'');
+    div.id='thread-'+p.username;
+    div.onclick=()=>openChat(p.username);
+    div.innerHTML=`
+      <div class="th-av" style="background:${getGradient(p.username)}">${getInitials(p.name)}<div class="th-dot"></div></div>
+      <div class="th-info"><div class="th-name">${p.name}</div><div class="th-preview">${preview}</div></div>
+      <div class="th-meta"><span class="th-time">${time}</span>${unread>0?`<div class="th-badge">${unread}</div>`:''}</div>`;
+    threads.appendChild(div);
+  }
+  // update badge
+  const totalUnread=await getTotalUnread();
+  const badge=document.getElementById('badge-msgs');
+  if(totalUnread>0){badge.textContent=totalUnread;badge.classList.add('show');}else{badge.classList.remove('show');}
+}
+
+async function getTotalUnread(){
+  let total=0;
+  for(const p of myMatches){
+    const key=chatRoomKey(ME.username,p.username);
+    const room=await sget(key)||{msgs:[]};
+    total+=room.msgs.filter(m=>m.from!==ME.username&&!m.read).length;
+  }
+  return total;
+}
+
+// ─── CHAT ─────────────────────────────────────────────────────────────────────
+function chatRoomKey(a,b){ return 'chat:'+(a<b?a+':'+b:b+':'+a); }
+function formatTime(ts){
+  const d=new Date(ts),now=new Date();
+  if(d.toDateString()===now.toDateString()) return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  return d.toLocaleDateString([],{month:'short',day:'numeric'});
+}
+
+async function openChat(username) {
+  activeChat=username;
+  const person=allUsers.find(u=>u.username===username);
+  if(!person){showToast('User not found');return;}
+  document.getElementById('chat-empty').style.display='none';
+  const ca=document.getElementById('chat-active');
+  ca.style.display='flex';
+
+  // Header
+  document.getElementById('chat-head').innerHTML=`
+    <div class="ch-av" style="background:${getGradient(person.username)}">${getInitials(person.name)}</div>
+    <div class="ch-info"><div class="ch-name">${person.name}</div><div class="ch-status">● Active now</div></div>
+    <div class="ch-actions">
+      <button class="ch-action" title="View profile" onclick="viewOtherProfile('${person.username}')"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+    </div>`;
+
+  // Mark read
+  const key=chatRoomKey(ME.username,username);
+  const room=await sget(key)||{msgs:[]};
+  room.msgs.forEach(m=>{if(m.from!==ME.username)m.read=true;});
+  await sset(key,room);
+
+  renderMessages(room.msgs, person);
+  document.getElementById('chat-input').focus();
+  document.querySelectorAll('.thread').forEach(t=>t.classList.remove('active'));
+  const thr=document.getElementById('thread-'+username);
+  if(thr)thr.classList.add('active');
+  buildThreads();
+}
+
+function renderMessages(msgs, person) {
+  const container=document.getElementById('chat-msgs');
+  container.innerHTML='';
+  if(msgs.length===0){
+    container.innerHTML=`<div style="text-align:center;padding:20px;font-size:12px;color:var(--text3);">You matched! Say hello to ${person.name} 👋</div>`;
+    return;
+  }
+  msgs.forEach(m=>{
+    const isMe=m.from===ME.username;
+    const wrap=document.createElement('div');
+    wrap.className='bubble-wrap'+(isMe?' me':'');
+    wrap.innerHTML=`
+      ${!isMe?`<div class="bav" style="background:${getGradient(person.username)}">${getInitials(person.name)}</div>`:''}
+      <div class="bubble">${escapeHtml(m.text)}</div>
+      <span class="btime">${formatTime(m.ts)}</span>`;
+    container.appendChild(wrap);
+  });
+  container.scrollTop=container.scrollHeight;
+}
+
+async function sendMsg() {
+  const input=document.getElementById('chat-input');
+  const text=input.value.trim();
+  if(!text||!activeChat)return;
+  input.value='';
+  const key=chatRoomKey(ME.username,activeChat);
+  const room=await sget(key)||{msgs:[]};
+  room.msgs.push({from:ME.username,text,ts:Date.now(),read:false});
+  await sset(key,room);
+  const person=allUsers.find(u=>u.username===activeChat);
+  if(person) renderMessages(room.msgs,person);
+  buildThreads();
+}
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ─── PROFILE ─────────────────────────────────────────────────────────────────
+function renderProfile(user) {
+  const u=user||ME;
+  const isMe=!user||user.username===ME.username;
+  const wrap=document.getElementById('profile-content');
+  const grad=getGradient(u.username);
+  const ints=u.interests||[];
+  wrap.innerHTML=`
+    <div class="profile-hero">
+      <div class="prof-banner" style="background:${grad};"></div>
+      <div class="prof-av-lg" style="background:${grad};">${getInitials(u.name)}</div>
+      <div class="prof-info">
+        <div class="prof-name-row">
+          <div class="prof-name">${u.name}</div>
+          ${isMe?`<button class="prof-edit-btn" onclick="openEdit()">Edit Profile</button>`:''}
+        </div>
+        <div class="prof-sub">
+          <span>📍 ${u.city}</span>
+          <span class="prof-tag">${u.age} yrs</span>
+          ${(u.lookingFor||[]).slice(0,2).map(l=>`<span class="prof-tag">${l}</span>`).join('')}
+        </div>
+      </div>
+      <div class="prof-stats">
+        <div class="prof-stat"><div class="prof-stat-n">${(u.matches||[]).length}</div><div class="prof-stat-l">Matches</div></div>
+        <div class="prof-stat"><div class="prof-stat-n">${(u.likes||[]).length}</div><div class="prof-stat-l">Connections sent</div></div>
+        <div class="prof-stat"><div class="prof-stat-n">${ints.length}</div><div class="prof-stat-l">Interests</div></div>
+      </div>
+    </div>
+    <div class="prof-section">
+      <h3>About</h3>
+      <p class="prof-bio">${u.bio||'No bio yet.'}</p>
+    </div>
+    <div class="prof-section">
+      <h3>Interests</h3>
+      <div class="ints-wrap">${ints.map(i=>`<span class="int-tag hi">${i}</span>`).join('')||'<span style="font-size:12px;color:var(--text3)">No interests added</span>'}</div>
+    </div>
+    ${isMe?`<div class="prof-section"><h3>Looking for</h3><div class="ints-wrap">${(u.lookingFor||[]).map(l=>`<span class="int-tag">${l}</span>`).join('')||'<span style="font-size:12px;color:var(--text3)">Nothing selected</span>'}</div></div>`:''}`;
+}
+
+function viewOtherProfile(username) {
+  const person=allUsers.find(u=>u.username===username);
+  if(!person)return;
+  renderProfile(person);
+  showPage('profile',document.getElementById('nav-profile'));
+}
+
+// ─── EDIT PROFILE ─────────────────────────────────────────────────────────────
+function openEdit(){
+  document.getElementById('ed-name').value=ME.name;
+  document.getElementById('ed-age').value=ME.age;
+  document.getElementById('ed-city').value=ME.city;
+  document.getElementById('ed-bio').value=ME.bio||'';
+  // looking for
+  document.querySelectorAll('#ed-looking .filter-pill').forEach(p=>{
+    p.classList.toggle('active',(ME.lookingFor||[]).includes(p.textContent));
+  });
+  // interests
+  document.querySelectorAll('#ed-interests .int-chip').forEach(c=>{
+    c.classList.toggle('sel',(ME.interests||[]).includes(c.textContent));
+  });
+  document.getElementById('edit-modal').classList.add('show');
+}
+function closeEdit(){ document.getElementById('edit-modal').classList.remove('show'); }
+
+async function saveProfile(){
+  const name=document.getElementById('ed-name').value.trim();
+  const age=parseInt(document.getElementById('ed-age').value);
+  const city=document.getElementById('ed-city').value.trim();
+  const bio=document.getElementById('ed-bio').value.trim();
+  const lookingFor=[...document.querySelectorAll('#ed-looking .filter-pill.active')].map(e=>e.textContent);
+  const interests=[...document.querySelectorAll('#ed-interests .int-chip.sel')].map(e=>e.textContent);
+  if(!name||!age||!city){showToast('Please fill required fields');return;}
+  ME.name=name; ME.age=age; ME.city=city; ME.bio=bio; ME.lookingFor=lookingFor; ME.interests=interests;
+  await sset('user:'+ME.username, ME);
+  closeEdit();
+  renderProfile();
+  document.getElementById('uc-name').textContent=ME.name.split(' ')[0];
+  showToast('Profile updated ✓');
+}
+
+// ─── POLLING (real-time simulation) ──────────────────────────────────────────
+function startPolling(){
+  clearInterval(pollInterval);
+  pollInterval=setInterval(async()=>{
+    // refresh user's own data
+    const fresh=await sget('user:'+ME.username);
+    if(fresh){ ME.matches=fresh.matches||ME.matches; ME.likes=fresh.likes||ME.likes; ME.passes=fresh.passes||ME.passes; }
+    // refresh all users (for online status)
+    await loadAllUsers();
+    buildOnlineList();
+    // if chat open, refresh messages
+    if(activeChat){
+      const key=chatRoomKey(ME.username,activeChat);
+      const room=await sget(key)||{msgs:[]};
+      const person=allUsers.find(u=>u.username===activeChat);
+      if(person){ renderMessages(room.msgs,person); }
+    }
+    // refresh thread previews and badges
+    await buildThreads();
+    // check for new matches
+    const newMatches=(ME.matches||[]).filter(m=>!myMatches.find(x=>x.username===m));
+    if(newMatches.length>0){ await buildMatches(); }
+  },2500);
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function showPage(name, btn) {
+  ['discover','matches','messages','profile'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el){ el.style.display='none'; if(el.style.flexDirection) el.style.flexDirection=''; }
+  });
+  const target=document.getElementById('page-'+name);
+  if(!target)return;
+  if(name==='discover') target.style.display='flex';
+  else if(name==='matches'){target.style.display='flex';target.style.flexDirection='column';buildMatches();}
+  else if(name==='messages'){target.style.display='flex';buildThreads();}
+  else if(name==='profile'){target.style.display='flex';renderProfile();}
+  target.classList.remove('page-enter');void target.offsetWidth;target.classList.add('page-enter');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function togglePill(el){ el.classList.toggle('active'); }
+function toggleInt(el){ el.classList.toggle('sel'); }
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ─── ENTER KEY ON LOGIN ───────────────────────────────────────────────────────
+document.getElementById('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('li-user').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
